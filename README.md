@@ -1,120 +1,82 @@
-# Android Wave Recorder
-[![](https://jitpack.io/v/squti/Android-Wave-Recorder.svg)](https://jitpack.io/#squti/Android-Wave-Recorder)
-[![Android Arsenal](https://img.shields.io/badge/Android%20Arsenal-Android%20Wave%20Recorder-brightgreen.svg?style=flat)](https://android-arsenal.com/details/1/7939)
+**AudioRecordView**
 
-A powerful and efficient library to record WAVE form audio files (WAV) in Android
-<p align="center">
-  <img width="300" height="300" src="https://raw.githubusercontent.com/squti/Android-Wave-Recorder/master/static/android-wave-recorder-logo.png">
-</p>
+*Audio visualizer that can be used during sound recording*
 
-Android Wave Recorder is a lightweight library written in Kotlin to record audio files with WAVE (WAV due to its filename extension) format in Android. It's very memory efficient and easy to use library with recording customizations.
+<a href="https://imgflip.com/gif/3keacb"><img src="https://i.imgflip.com/3keacb.gif" title="made at imgflip.com"/></a>
 
-### Download
-Step 1. Add this in your root (Project) build.gradle at the end of repositories:
-```gradle
+**How to include?**
+
+Add the repository to your project build.gradle:
+```
 allprojects {
-        repositories {
-            ...
-            maven { url "https://jitpack.io" }
-        }
+    repositories {
+        ...
+        maven { url 'https://jitpack.io' }
     }
-```
-Step 2. Add the dependency
-```gradle
-dependencies{
-    implementation 'com.github.squti:Android-Wave-Recorder:1.4.0'
 }
 ```
-### Permission
-Add these permissions into your `AndroidManifest.xml` and [request for them in Android 6.0+](https://developer.android.com/training/permissions/requesting.html)
+And add the library to your module build.gradle:
+```
+dependencies {
+  implementation 'com.github.Armen101:AudioRecordView:1.0.2'
+}
+```
+Or Maven
+```
+<dependency>
+  <groupId>com.github.Armen101</groupId>
+  <artifactId>AudioRecordView</artifactId>
+  <version>1.0.2</version>
+</dependency>
+```
+
+**How do I use AudioRecordView?**
+
+in XML 
+
 ```xml
-<uses-permission android:name="android.permission.RECORD_AUDIO"/>
-<uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE"/>
+<com.visualizer.amplitude.AudioRecordView
+        android:id="@+id/audioRecordView"
+        android:layout_width="256dp"
+        android:layout_height="64dp"
+        app:chunkAlignTo="bottom"                                  
+        app:chunkRoundedCorners="true"
+        app:chunkSoftTransition="true"                                  
+        app:chunkColor="@color/app_style_blue"
+        app:chunkSpace="1dp"
+        app:chunkWidth="2dp"
+        app:chunkMaxHeight="48dp"
+        app:chunkMinHeight="2dp"/>
 ```
+Drawing
 
-### Usage
-Pass in the path of the output file to `WaveRecorder` class and call `startRecording()` like this:
+You can execute this code in a timer, for example, every 100 milliseconds
+
 ```kotlin
-/**
- * This path points to application cache directory.
- * you could change it based on your usage
- */
-val filePath:String = externalCacheDir?.absolutePath + "/audioFile.wav"
-
-val waveRecorder = WaveRecorder(filePath)
-waveRecorder.startRecording()
-
-```
-To stop recording call `stopRecording()` function:
-```kotlin
-waveRecorder.stopRecording()
-
+ val audioRecordView: AudioRecordView = findViewById(R.id.audioRecordView)
+ 
+ // in the timer
+ val currentMaxAmplitude = getMediaRecorder().getMaxAmplitude()
+ audioRecordView.update(currentMaxAmplitude)   //redraw view
 ```
 
-To pause and resume recording you could use `pauseRecording()` and `resumeRecording()` functions:
-```kotlin
-//Pause
-waveRecorder.pauseRecording()
-
-//Resume
-waveRecorder.resumeRecording()
-
+At the end or before reuse
 ```
-
-To activate `Noise Suppressor` you could set `noiseSuppressorActive` to true:
-```kotlin
-waveRecorder.noiseSuppressorActive = true
-
+audioRecordView.recreate()
 ```
+**Compatibility**
 
-To listen to audio amplitude during recording you need to register a listener to `onAmplitudeListener`:
-```kotlin
-waveRecorder.onAmplitudeListener = {
-    Log.i(TAG, "Amplitude : $it")
-}
-```
-### Configuration
-The default configuration for recording audio is like so: 
+Minimum Android SDK: AudioRecordView requires a minimum API level of 16.
 
-| Property | Value |
-| :---: | :---: |
-| sampleRate | 16000 |
-| channels | AudioFormat.CHANNEL_IN_MONO |
-| audioEncoding | AudioFormat.ENCODING_PCM_16BIT |
+**Also you can see**
 
-But you could change it using `waveConfig` property in `WaveRecorder` class based on your usage. This is an example:
-```kotlin
-val waveRecorder = WaveRecorder(filePath)
-waveRecorder.waveConfig.sampleRate = 44100
-waveRecorder.waveConfig.channels = AudioFormat.CHANNEL_IN_STEREO
-waveRecorder.waveConfig.audioEncoding = AudioFormat.ENCODING_PCM_8BIT
-waveRecorder.startRecording()
-```
-_Note: Wrong configuration may impacts output quality_
+[Sample project](https://github.com/Armen101/AudioRecordViewSample) in github
 
+[Tutorial](https://medium.com/@gevorgyanweb/audiorecordview-or-simplest-and-best-audio-visualizer-for-android-4fcec59608) in Medium
 
-### License
-```
-MIT License
+**License**
 
-Copyright (c) 2019 squti
+Apache 2.0. See the [LICENSE](https://github.com/Armen101/AudioRecordView/blob/master/LICENSE). file for details.
 
-Permission is hereby granted, free of charge, to any person obtaining a copy
-of this software and associated documentation files (the "Software"), to deal
-in the Software without restriction, including without limitation the rights
-to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
-copies of the Software, and to permit persons to whom the Software is
-furnished to do so, subject to the following conditions:
-
-The above copyright notice and this permission notice shall be included in all
-copies or substantial portions of the Software.
-
-THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
-IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
-FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
-AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
-LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
-OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
-SOFTWARE.
-```
-
+**Author**
+Armen Gevorgyan
