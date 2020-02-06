@@ -29,7 +29,7 @@ class AudioRecordView : View {
     private var lastUpdateTime = 0L
 
     private val minorTickWidth = 1.dp()
-    private val majorTickWidth = 2.dp()
+    private val majorTickWidth = 1.dp()
     private val minorTickHeight = 8.dp()
     private val majorTickHeight = 8.dp()
     private val timestampMargin = 4.dp()
