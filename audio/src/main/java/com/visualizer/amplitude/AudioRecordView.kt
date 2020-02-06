@@ -290,16 +290,17 @@ class AudioRecordView : View {
 
     private fun drawRudder(canvas: Canvas) {
         val chunkHorizontalScale = chunkWidth + chunkSpace
-        val maxDuration = (width / chunkHorizontalScale).toInt() * updateInterval
+        val maxChunkCount = (width / chunkHorizontalScale).toInt()
+        val maxDuration = maxChunkCount * updateInterval
         var offset = max(0, duration - maxDuration)
         val tickStart = height - timestampSize - 2 * timestampMargin - majorTickHeight
         val minorTickEnd = tickStart + minorTickHeight
         val majorTickEnd = tickStart + majorTickHeight
         var timeStampY = height - timestampMargin
         var time = offset
-        for (i in 0 until chunkHeights.size - 1) {
+        for (i in 0 until maxChunkCount - 1) {
             if (time % 200 == 0) {
-                val x = chunkWidths[i]
+                val x = i * chunkHorizontalScale
                 if (time % 1000 == 0){
                     canvas.drawLine(x, tickStart, x, majorTickEnd, majorTickPaint)
                     canvas.drawText(formatTimestamp(time), x, timeStampY, timestampPaint)
