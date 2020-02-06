@@ -287,20 +287,29 @@ class AudioRecordView : View {
         val chunkHorizontalScale = chunkWidth + chunkSpace
         val maxDuration = (width / chunkHorizontalScale).toInt() * updateInterval
         var offset = max(0, duration - maxDuration)
-        val tickStart = height - timestampSize - timestampMargin - majorTickHeight
+        val tickStart = height - timestampSize - 2 * timestampMargin - majorTickHeight
         val minorTickEnd = tickStart + minorTickHeight
         val majorTickEnd = tickStart + majorTickHeight
+        var timeStampY = height - timestampMargin
         var time = offset
         for (i in 0 until chunkHeights.size - 1) {
             if (time % 200 == 0) {
                 val x = chunkWidths[i]
                 if (time % 1000 == 0){
-                    canvas.drawLine(x, tickStart, x, minorTickEnd, minorTickPaint)
-                } else {
                     canvas.drawLine(x, tickStart, x, majorTickEnd, majorTickPaint)
+                    canvas.drawText(formatTimestamp(time), x, timeStampY, timestampPaint)
+                } else {
+                    canvas.drawLine(x, tickStart, x, minorTickEnd, minorTickPaint)
                 }
             }
             time += updateInterval
         }
+    }
+
+    private fun formatTimestamp(timestamp : Int) : String{
+        val minutes = timestamp / 1000 / 60
+        val seconds = timestamp / 1000 % 60
+        return java.lang.String.format(Locale.US, "%02d:%02d", minutes, seconds)
+
     }
 }
