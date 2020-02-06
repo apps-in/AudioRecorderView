@@ -29,10 +29,10 @@ class AudioRecordView : View {
     private var lastUpdateTime = 0L
 
     private val minorTickWidth = 1.dp()
-    private val majorTickWidth = 2.dp()
-    private val minorTickHeight = 2.dp()
-    private val majorTickHeight = 4.dp()
-    private val timestampMargin = 2.dp()
+    private val majorTickWidth = 1.dp()
+    private val minorTickHeight = 4.dp()
+    private val majorTickHeight = 8.dp()
+    private val timestampMargin = 4.dp()
 
     private var usageWidth = 0f
     private var chunkHeights = ArrayList<Float>()
@@ -287,7 +287,7 @@ class AudioRecordView : View {
         val chunkHorizontalScale = chunkWidth + chunkSpace
         val maxDuration = (width / chunkHorizontalScale).toInt() * updateInterval
         var offset = max(0, duration - maxDuration)
-        val tickStart = height - timestampSize - timestampMargin - majorTickHeight;
+        val tickStart = height - timestampSize - timestampMargin - majorTickHeight
         val minorTickEnd = tickStart + minorTickHeight
         val majorTickEnd = tickStart + majorTickHeight
         var time = offset
@@ -299,8 +299,8 @@ class AudioRecordView : View {
                 } else {
                     canvas.drawLine(x, tickStart, x, majorTickEnd, majorTickPaint)
                 }
-                time += updateInterval
             }
+            time += updateInterval
         }
     }
 }
