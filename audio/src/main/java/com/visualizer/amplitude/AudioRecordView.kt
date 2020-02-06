@@ -6,7 +6,9 @@ import android.graphics.Color
 import android.graphics.Paint
 import android.util.AttributeSet
 import android.view.View
+import androidx.core.content.res.ResourcesCompat
 import java.util.*
+import kotlin.math.max
 
 
 class AudioRecordView : View {
@@ -21,7 +23,16 @@ class AudioRecordView : View {
     var chunkAlignTo = AlignTo.CENTER
 
     private val chunkPaint = Paint()
+    private val minorTickPaint = Paint()
+    private val majorTickPaint = Paint()
+    private val timestampPaint = Paint()
     private var lastUpdateTime = 0L
+
+    private val minorTickWidth = 1.dp()
+    private val majorTickWidth = 2.dp()
+    private val minorTickHeight = 2.dp()
+    private val majorTickHeight = 4.dp()
+    private val timestampMargin = 2.dp()
 
     private var usageWidth = 0f
     private var chunkHeights = ArrayList<Float>()
@@ -52,6 +63,37 @@ class AudioRecordView : View {
             field = value
         }
 
+    var minorTickColor = Color.BLACK
+        set(value) {
+            minorTickPaint.color = value
+            field = value
+        }
+    var majorTickColor = Color.RED
+        set(value) {
+            majorTickPaint.color = value
+            field = value
+        }
+    var timestampColor = Color.GRAY
+        set(value) {
+            timestampPaint.color = value
+            field = value
+        }
+    var timestampSize = 12.dp()
+        set(value) {
+            timestampPaint.textSize = value
+            field = value
+        }
+    var timestampTypeface = 0
+        set(value) {
+            if (value != 0) {
+                timestampPaint.typeface = ResourcesCompat.getFont(context, value)
+            }
+            field = value
+        }
+
+    var updateInterval = 100       //ms
+    var duration = 0                //ms
+
     constructor(context: Context) : super(context) {
         init()
     }
@@ -70,6 +112,7 @@ class AudioRecordView : View {
 
     fun recreate() {
         usageWidth = 0f
+        duration = 0
         chunkWidths.clear()
         chunkHeights.clear()
         invalidate()
@@ -77,6 +120,7 @@ class AudioRecordView : View {
 
     fun update(fft: Int) {
         handleNewFFT(fft)
+        duration += updateInterval
         invalidate() // call to the onDraw function
         lastUpdateTime = System.currentTimeMillis()
     }
@@ -84,11 +128,22 @@ class AudioRecordView : View {
     override fun onDraw(canvas: Canvas) {
         super.onDraw(canvas)
         drawChunks(canvas)
+        drawRudder(canvas)
     }
 
     private fun init() {
         chunkPaint.strokeWidth = chunkWidth
         chunkPaint.color = chunkColor
+        minorTickPaint.color = minorTickColor
+        minorTickPaint.strokeWidth = minorTickWidth
+        majorTickPaint.color = majorTickColor
+        majorTickPaint.strokeWidth = majorTickWidth
+        timestampPaint.textAlign = Paint.Align.CENTER
+        timestampPaint.color = timestampColor
+        timestampPaint.textSize = timestampSize
+        if (timestampTypeface != 0) {
+            timestampPaint.typeface = ResourcesCompat.getFont(context, timestampTypeface)
+        }
     }
 
     private fun init(attrs: AttributeSet) {
@@ -111,12 +166,27 @@ class AudioRecordView : View {
                         AlignTo.BOTTOM.value -> AlignTo.BOTTOM
                         else -> AlignTo.CENTER
                     }
+                minorTickColor =
+                    getColor(R.styleable.AudioRecordView_minorTickColor, minorTickColor)
+                majorTickColor =
+                    getColor(R.styleable.AudioRecordView_majorTickColor, majorTickColor)
+                timestampColor =
+                    getColor(R.styleable.AudioRecordView_timestampColor, timestampColor)
+                timestampSize =
+                    getDimension(R.styleable.AudioRecordView_timestampSize, timestampSize)
+                timestampTypeface =
+                    getResourceId(R.styleable.AudioRecordView_timestampTypeface, timestampTypeface)
 
                 chunkSoftTransition =
                     getBoolean(R.styleable.AudioRecordView_chunkSoftTransition, chunkSoftTransition)
 
+
+
                 setWillNotDraw(false)
                 chunkPaint.isAntiAlias = true
+                minorTickPaint.isAntiAlias = true
+                majorTickPaint.isAntiAlias = true
+                timestampPaint.isAntiAlias = true
             } finally {
                 recycle()
             }
@@ -210,6 +280,27 @@ class AudioRecordView : View {
             val stopY = startY - chunkHeights[i]
 
             canvas.drawLine(chunkX, startY, chunkX, stopY, chunkPaint)
+        }
+    }
+
+    private fun drawRudder(canvas: Canvas) {
+        val chunkHorizontalScale = chunkWidth + chunkSpace
+        val maxDuration = (width / chunkHorizontalScale).toInt() * updateInterval
+        var offset = max(0, duration - maxDuration)
+        val tickStart = height - timestampSize - timestampMargin - majorTickHeight;
+        val minorTickEnd = tickStart + minorTickHeight
+        val majorTickEnd = tickStart + majorTickHeight
+        var time = offset
+        for (i in 0 until chunkHeights.size - 1) {
+            if (time % 200 == 0) {
+                val x = chunkWidths[i]
+                if (time % 1000 == 0){
+                    canvas.drawLine(x, tickStart, x, minorTickEnd, minorTickPaint)
+                } else {
+                    canvas.drawLine(x, tickStart, x, majorTickEnd, majorTickPaint)
+                }
+                time += updateInterval
+            }
         }
     }
 }
