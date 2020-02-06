@@ -213,7 +213,7 @@ class AudioRecordView : View {
         }
 
         if (chunkMaxHeight == uninitialized) {
-            chunkMaxHeight = height - (topBottomPadding * 2)
+            chunkMaxHeight = height - (topBottomPadding * 2) - 2 * (timestampSize + 3 * timestampMargin + majorTickHeight)
         } else if (chunkMaxHeight > height - (topBottomPadding * 2)) {
             chunkMaxHeight = height - (topBottomPadding * 2)
         }
@@ -303,7 +303,11 @@ class AudioRecordView : View {
                 val x = i * chunkHorizontalScale
                 if (time % 1000 == 0){
                     canvas.drawLine(x, tickStart, x, majorTickEnd, majorTickPaint)
-                    canvas.drawText(formatTimestamp(time), x, timeStampY, timestampPaint)
+                    val timestamp = formatTimestamp(time)
+                    val textWidth = timestampPaint.measureText(timestamp)
+                    if (x - textWidth / 2 > 0 && x + textWidth / 2 < width) {
+                        canvas.drawText(timestamp, x, timeStampY, timestampPaint)
+                    }
                 } else {
                     canvas.drawLine(x, tickStart, x, minorTickEnd, minorTickPaint)
                 }
