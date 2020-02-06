@@ -132,18 +132,20 @@ class AudioRecordView : View {
     }
 
     private fun init() {
+        chunkPaint.isAntiAlias = true
+        minorTickPaint.isAntiAlias = true
+        majorTickPaint.isAntiAlias = true
+        timestampPaint.isAntiAlias = true
         chunkPaint.strokeWidth = chunkWidth
         chunkPaint.color = chunkColor
         minorTickPaint.color = minorTickColor
-        minorTickPaint.strokeWidth = minorTickWidth
         majorTickPaint.color = majorTickColor
-        majorTickPaint.strokeWidth = majorTickWidth
-        timestampPaint.textAlign = Paint.Align.CENTER
         timestampPaint.color = timestampColor
         timestampPaint.textSize = timestampSize
-        if (timestampTypeface != 0) {
-            timestampPaint.typeface = ResourcesCompat.getFont(context, timestampTypeface)
-        }
+
+        minorTickPaint.strokeWidth = minorTickWidth
+        majorTickPaint.strokeWidth = majorTickWidth
+        timestampPaint.textAlign = Paint.Align.CENTER
     }
 
     private fun init(attrs: AttributeSet) {
@@ -187,6 +189,9 @@ class AudioRecordView : View {
                 minorTickPaint.isAntiAlias = true
                 majorTickPaint.isAntiAlias = true
                 timestampPaint.isAntiAlias = true
+                minorTickPaint.strokeWidth = minorTickWidth
+                majorTickPaint.strokeWidth = majorTickWidth
+                timestampPaint.textAlign = Paint.Align.CENTER
             } finally {
                 recycle()
             }
