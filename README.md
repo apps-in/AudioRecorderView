@@ -1,82 +1,78 @@
-**AudioRecordView**
+# AudioRecorderView
 
-*Audio visualizer that can be used during sound recording*
+[![](https://jitpack.io/v/apps-in/AudioRecorderView.svg)](https://jitpack.io/#apps-in/AudioRecorderView)
 
-<a href="https://imgflip.com/gif/3keacb"><img src="https://i.imgflip.com/3keacb.gif" title="made at imgflip.com"/></a>
+Modified version of [AudioRecordView widget](https://github.com/Armen101/AudioRecordView)
 
-**How to include?**
+## Usage
 
-Add the repository to your project build.gradle:
-```
+Add to your root build.gradle:
+```Groovy
 allprojects {
-    repositories {
-        ...
-        maven { url 'https://jitpack.io' }
-    }
+	repositories {
+	...
+	maven { url "https://jitpack.io" }
+	}
 }
 ```
-And add the library to your module build.gradle:
-```
+
+Add the dependency:
+```Groovy
 dependencies {
-  implementation 'com.github.Armen101:AudioRecordView:1.0.2'
+	implementation 'com.github.apps-in:AudioRecorderView:Version'
 }
 ```
-Or Maven
-```
-<dependency>
-  <groupId>com.github.Armen101</groupId>
-  <artifactId>AudioRecordView</artifactId>
-  <version>1.0.2</version>
-</dependency>
-```
 
-**How do I use AudioRecordView?**
-
-in XML 
-
-```xml
+Add widget to layout xml file:
+```Groovy
 <com.visualizer.amplitude.AudioRecordView
-        android:id="@+id/audioRecordView"
-        android:layout_width="256dp"
-        android:layout_height="64dp"
-        app:chunkAlignTo="bottom"                                  
-        app:chunkRoundedCorners="true"
-        app:chunkSoftTransition="true"                                  
-        app:chunkColor="@color/app_style_blue"
-        app:chunkSpace="1dp"
-        app:chunkWidth="2dp"
-        app:chunkMaxHeight="48dp"
-        app:chunkMinHeight="2dp"/>
-```
-Drawing
-
-You can execute this code in a timer, for example, every 100 milliseconds
-
-```kotlin
- val audioRecordView: AudioRecordView = findViewById(R.id.audioRecordView)
- 
- // in the timer
- val currentMaxAmplitude = getMediaRecorder().getMaxAmplitude()
- audioRecordView.update(currentMaxAmplitude)   //redraw view
+	android:id="@+id/recordView"
+	app:chunkAlignTo="center"
+	app:chunkColor="chunkColor"
+	app:chunkMinHeight="4dp"
+	app:chunkRoundedCorners="true"
+	app:chunkSpace="4dp"
+	app:chunkWidth="4dp"
+	app:majorTickColor="majorTickColor"
+	app:minorTickColor="minorTickColor"
+	app:timestampColor="timestampColor"
+	app:timestampSize="10sp"
+	app:timestampTypeface="timestampTypeface" />
 ```
 
-At the end or before reuse
+Every 100 ms update state of widget by feeding new amplitude value:
+```Groovy
+recordView.update(amplitude);
 ```
-audioRecordView.recreate()
+
+To reset widget call `recreate()` function:
+```Groovy
+recordView.recreate();
 ```
-**Compatibility**
 
-Minimum Android SDK: AudioRecordView requires a minimum API level of 16.
+### License
+```
+MIT License
 
-**Also you can see**
+Copyright (c) 2020 Ihor Nepomniashchyi
 
-[Sample project](https://github.com/Armen101/AudioRecordViewSample) in github
+Permission is hereby granted, free of charge, to any person obtaining a copy
+of this software and associated documentation files (the "Software"), to deal
+in the Software without restriction, including without limitation the rights
+to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+copies of the Software, and to permit persons to whom the Software is
+furnished to do so, subject to the following conditions:
 
-[Tutorial](https://medium.com/@gevorgyanweb/audiorecordview-or-simplest-and-best-audio-visualizer-for-android-4fcec59608) in Medium
+The above copyright notice and this permission notice shall be included in all
+copies or substantial portions of the Software.
 
-**License**
+THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+SOFTWARE.
+```
 
-Apache 2.0. See the [LICENSE](https://github.com/Armen101/AudioRecordView/blob/master/LICENSE). file for details.
 
-**Author**
-Armen Gevorgyan
